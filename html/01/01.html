@@ -36,7 +36,7 @@
             var socket = io.connect(serverUrl);
 
             socket.on('interact', function (data) {
-                log(data.message);
+                log(data);
             });
         }
 
