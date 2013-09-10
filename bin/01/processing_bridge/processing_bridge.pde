@@ -27,42 +27,7 @@ void draw() {
         //fill(204);                    
         p.write('H');  
       }
-      
       //rect(200, 200, 200, 200); 
     } 
   } 
 } 
-
-/*
-
-
-
-void setup() 
-{
-  size(600, 600);
-  String portName = Serial.list()[0];
-  myPort = new Serial(this, portName, 9600);
-}
-
-void draw() {
-  background(255);
-  if (mouseOverRect() == true) {  
-    fill(204);                    
-    myPort.write('H');             
-  } 
-  else {                       
-    fill(0);                     
-    myPort.write('L');              
-  }
-  rect(200, 200, 200, 200);        
-  
-  if ( myPort.available() > 0) {
-    print(myPort.read());         
-  }
-}
-
-boolean mouseOverRect() { // Test if mouse is over square
-  return ((mouseX >= 200) && (mouseX <= 400) && (mouseY >= 200) && (mouseY <= 400));
-}
-
-*/
