@@ -1,4 +1,4 @@
-var io = require('socket.io')
+var io = require('socket.io');
 var net = require('net');
 
 var nst;
