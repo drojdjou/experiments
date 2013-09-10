@@ -1,4 +1,4 @@
-var io = require('socket.io');
+var io = require('socket.io').listen(8123);
 var net = require('net');
 
 var nst;
@@ -29,5 +29,4 @@ ns = net.createServer(function (s) {
 
 });
 
-io.listen(8123);
 ns.listen(1337);
