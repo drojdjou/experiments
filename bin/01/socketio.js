@@ -17,13 +17,13 @@ io.sockets.on('connection', function (socket) {
     });
 });
 
-ns = net.createServer(function (socket) {
+ns = net.createServer(function (s) {
 
-    nst = socket;
+    nst = s;
 
     console.log("new client");
 
-    socket.on('end', function() {
+    s.on('end', function() {
         nst = null;
     })
 
