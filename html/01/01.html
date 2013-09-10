@@ -15,7 +15,7 @@
             if (!cns) cns = document.getElementById('console');
             var d = new Date();
             var t = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + ":" + d.getMilliseconds()
-            cns.innerHTML += "[" + ID + "] " + t + " > " + m + "<br>";
+            cns.innerHTML += "[" + ID + "] " + t + "<br>" + m + "<br><br>";
         }
 
         window.onload = function () {
@@ -23,28 +23,28 @@
             log("New client connected");
 
             document.addEventListener('mouseup', function () {
-                log("Click");
+                log("local click " + ID);
+                socket.emit('touch', { message: "remote click " + ID });
             });
 
             document.addEventListener('touchend', function () {
-                log("Tap");
+                log("local tap " + ID);
+                socket.emit('touch', { message: "remote tap " + ID });
             });
 
 
             var serverUrl = 'http://ec2-54-218-0-72.us-west-2.compute.amazonaws.com:8123';
 
-            log("Connecting to " + serverUrl);
+            log("Connecting to server");
 
             var socket = io.connect(serverUrl);
 
             console.log(socket);
 
-            socket.on('news', function (data) {
-                console.log(data);
-                socket.emit('my other event', { my: 'data' });
+            socket.on('touch', function (data) {
+                log(data.message);
+
             });
-
-
         }
 
     </script>
