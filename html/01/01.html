@@ -11,29 +11,32 @@
 
         var cns, ID;
 
+        function getTimeStamp() {
+            return d.getSeconds() + ":" + d.getMilliseconds();
+        }
+
         function log(m) {
             if (!cns) cns = document.getElementById('console');
             var d = new Date();
-            var t = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + ":" + d.getMilliseconds()
-            cns.innerHTML += "[" + ID + "] " + t + "<br>" + m + "<br><br>";
+//            var t = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + ":" + d.getMilliseconds()
+            cns.innerHTML += getTimeStamp() + " > " + m + "<br><br>";
         }
 
         window.onload = function () {
             ID = Math.random() * 999 | 1;
-            log("new client " + ID);
 
             document.addEventListener('mouseup', function () {
-                log("local click " + ID);
-                socket.emit('interact', { message: "remote click " + ID });
+                socket.emit('interact', { message: "click " + ID + " (" + getTimeStamp() + ")" });
             });
 
             document.addEventListener('touchend', function () {
-                log("local tap " + ID);
-                socket.emit('interact', { message: "remote tap " + ID });
+                socket.emit('interact', { message: "tap " + ID + " (" + getTimeStamp() + ")" });
             });
 
             var serverUrl = 'http://ec2-54-218-0-72.us-west-2.compute.amazonaws.com:8123';
             var socket = io.connect(serverUrl);
+
+            socket.emit('interact', 'new client' + ID);
 
             socket.on('interact', function (data) {
                 log(data);
