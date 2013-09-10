@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>01. Basic websocket connection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable = no">
+
+    <link rel="stylesheet" href="simple.css"/>
+
+    <script type="text/javascript">
+
+        var cns, ID;
+
+        function log(m) {
+            if (!cns) cns = document.getElementById('console');
+            var d = new Date();
+            var t = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + ":" + d.getMilliseconds()
+            cns.innerHTML += "[" + ID + "] " + t + " > " + m + "<br>";
+        }
+
+        window.onload = function () {
+            ID = Math.random() * 999 | 1;
+            log("New client connected");
+
+            document.addEventListener('mouseup', function () {
+                log("Click");
+            });
+
+            document.addEventListener('touchend', function () {
+                log("Tap");
+            });
+        }
+
+    </script>
+
+</head>
+<body>
+<div id="console"></div>
+
+<script>
+    if (location.host == "localhost") {
+        document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>');
+    }
+</script>
+
+</body>
+</html>
