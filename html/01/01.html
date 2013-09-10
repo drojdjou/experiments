@@ -20,31 +20,23 @@
 
         window.onload = function () {
             ID = Math.random() * 999 | 1;
-            log("New client connected");
+            log("new client " + ID);
 
             document.addEventListener('mouseup', function () {
                 log("local click " + ID);
-                socket.emit('touch', { message: "remote click " + ID });
+                socket.emit('interact', { message: "remote click " + ID });
             });
 
             document.addEventListener('touchend', function () {
                 log("local tap " + ID);
-                socket.emit('touch', { message: "remote tap " + ID });
+                socket.emit('interact', { message: "remote tap " + ID });
             });
 
-
             var serverUrl = 'http://ec2-54-218-0-72.us-west-2.compute.amazonaws.com:8123';
-
-            log("Connecting to server");
-
             var socket = io.connect(serverUrl);
 
-            console.log(socket);
-
-            socket.on('touch', function (data) {
-                console.log(data);
+            socket.on('interact', function (data) {
                 log(data.message);
-
             });
         }
 
