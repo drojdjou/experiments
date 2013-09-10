@@ -6,7 +6,7 @@
 
     <link rel="stylesheet" href="simple.css"/>
 
-    <script src="socket.io.js"></script>
+    <script src="../js/socket.io.js"></script>
     <script type="text/javascript">
 
         var cns, ID;
@@ -31,11 +31,18 @@
             });
 
 
-//            var socket = io.connect('http://localhost');
-//            socket.on('news', function (data) {
-//                console.log(data);
-//                socket.emit('my other event', { my: 'data' });
-//            });
+            var serverUrl = 'http://ec2-54-218-0-72.us-west-2.compute.amazonaws.com:8080';
+
+            log("Connecting to " + serverUrl);
+
+            var socket = io.connect(serverUrl);
+
+            console.log(socket);
+
+            socket.on('news', function (data) {
+                console.log(data);
+                socket.emit('my other event', { my: 'data' });
+            });
 
 
         }
@@ -46,11 +53,11 @@
 <body>
 <div id="console"></div>
 
-<script>
-    if (location.host == "localhost") {
-        document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>');
-    }
-</script>
+<!--<script>-->
+    <!--if (location.host == "localhost") {-->
+        <!--document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>');-->
+    <!--}-->
+<!--</script>-->
 
 </body>
 </html>
