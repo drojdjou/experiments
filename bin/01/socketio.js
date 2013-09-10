@@ -1,6 +1,6 @@
-var io = require('socket.io').listen(8080);
+var io = require('socket.io').listen(8123);
 
-console.log("Server started on 8080");
+console.log("Server started on 8123");
 
 io.sockets.on('connection', function (socket) {
 
