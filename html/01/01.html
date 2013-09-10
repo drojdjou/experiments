@@ -12,14 +12,13 @@
         var cns, ID;
 
         function getTimeStamp() {
+            var d = new Date();
             return d.getSeconds() + ":" + d.getMilliseconds();
         }
 
         function log(m) {
             if (!cns) cns = document.getElementById('console');
-            var d = new Date();
-//            var t = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + ":" + d.getMilliseconds()
-            cns.innerHTML += getTimeStamp() + " > " + m + "<br><br>";
+            cns.innerHTML += getTimeStamp() + " > " + m + "<br>";
         }
 
         window.onload = function () {
@@ -36,7 +35,7 @@
             var serverUrl = 'http://ec2-54-218-0-72.us-west-2.compute.amazonaws.com:8123';
             var socket = io.connect(serverUrl);
 
-            socket.emit('interact', 'new client' + ID);
+            socket.emit('interact', { message: 'new client ' + ID});
 
             socket.on('interact', function (data) {
                 log(data);
