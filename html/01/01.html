@@ -6,6 +6,7 @@
 
     <link rel="stylesheet" href="simple.css"/>
 
+    <script src="socket.io.js"></script>
     <script type="text/javascript">
 
         var cns, ID;
@@ -28,6 +29,15 @@
             document.addEventListener('touchend', function () {
                 log("Tap");
             });
+
+
+//            var socket = io.connect('http://localhost');
+//            socket.on('news', function (data) {
+//                console.log(data);
+//                socket.emit('my other event', { my: 'data' });
+//            });
+
+
         }
 
     </script>
