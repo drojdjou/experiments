@@ -9,29 +9,36 @@
     <script src="../js/socket.io.js"></script>
     <script type="text/javascript">
 
+        var delta, socket;
+
         window.onload = function () {
 
             var startX, endX;
             var info = document.getElementById("info");
 
+            var serverUrl = 'http://ec2-54-218-0-72.us-west-2.compute.amazonaws.com:8123';
+            socket = io.connect(serverUrl);
+
             document.addEventListener('touchstart', function (e) {
                 startX = e.targetTouches[0].pageX;
-                info.innerHTML = startX;
+                info.innerHTML += startX;
 
             });
 
             document.addEventListener('touchmove', function (e) {
                 e.preventDefault();
                 var x = e.targetTouches[0].pageX;
+                delta = x - startX;
                 info.innerHTML = x - startX;
             });
 
             document.addEventListener('touchend', function (e) {
-                var x = e.targetTouches[0].pageX;
-                var delta = x - startX;
-
-                if(delta > 0) info.innerHTML = "Forward";
-                if(delta < 0) info.innerHTML = "Back";
+                if (delta > 0) {
+                    socket.emit('slide', 'b');
+                }
+                else if (delta < 0) {
+                    socket.emit('slide', 'f');
+                }
             });
 
         }

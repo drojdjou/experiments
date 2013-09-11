@@ -31,8 +31,7 @@
             socket = io.connect(serverUrl);
 
             socket.on('slide', function (data) {
-                console.log(data);
-                //move(data == "f");
+                move(data == "f");
             });
 
             document.addEventListener("keydown", function (e) {
