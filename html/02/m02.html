@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>02. Websocket Slide Viewer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable = no">
+
+    <link rel="stylesheet" href="main.css"/>
+
+    <script src="../js/socket.io.js"></script>
+    <script type="text/javascript">
+
+        window.onload = function () {
+
+            var startX, endX;
+            var info = document.getElementById("info");
+
+            document.addEventListener('touchstart', function (e) {
+                startX = e.targetTouches[0].pageX;
+                info.innerHTML = startX;
+
+            });
+
+            document.addEventListener('touchmove', function (e) {
+                e.preventDefault();
+                var x = e.targetTouches[0].pageX;
+                info.innerHTML = x - startX;
+            });
+
+            document.addEventListener('touchend', function (e) {
+                var x = e.targetTouches[0].pageX;
+                var delta = x - startX;
+
+                if(delta > 0) info.innerHTML = "Forward";
+                if(delta < 0) info.innerHTML = "Back";
+            });
+
+        }
+
+    </script>
+
+</head>
+<body>
+<h2 id="info">0</h2>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>02. Websocket Slide Viewer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable = no">
+
+    <link rel="stylesheet" href="main.css"/>
+
+    <script src="../js/socket.io.js"></script>
+    <script type="text/javascript">
+
+        var s, curSlide = 0, socket;
+
+        function move(forward) {
+            if (forward) {
+                if (curSlide == 7) return;
+                else curSlide++;
+            } else {
+                if (curSlide == 0) return;
+                else curSlide--;
+            }
+
+            s.style['-webkit-transform'] = 'translateX(' + (curSlide * -100) + '%)';
+        }
+
+        window.onload = function () {
+
+            s = document.getElementById("slideshow");
+
+            var serverUrl = 'http://ec2-54-218-0-72.us-west-2.compute.amazonaws.com:8123';
+            socket = io.connect(serverUrl);
+
+            socket.on('slide', function (data) {
+                console.log(data);
+                //move(data == "f");
+            });
+
+            document.addEventListener("keydown", function (e) {
+                move(e.keyCode == 39);
+            });
+        }
+
+    </script>
+
+</head>
+<body>
+<ul id="slideshow">
+    <li>1</li>
+    <li>2</li>
+    <li>3</li>
+    <li>4</li>
+    <li>5</li>
+    <li>6</li>
+    <li>7</li>
+    <li>8</li>
+</ul>
+</body>
+
+<script>
+    if (location.host == "localhost") {
+        document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>');
+    }
+</script>
+
+</html>
