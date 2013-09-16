@@ -11,16 +11,23 @@
 
         var s, curSlide = 0, socket;
 
-        function move(forward) {
-            if (forward) {
-                if (curSlide == 7) return;
-                else curSlide++;
-            } else {
-                if (curSlide == 0) return;
-                else curSlide--;
+        function move(dir) {
+
+            if (dir == "f" && curSlide < 7) {
+                curSlide++;
+            } else if(dir == "b" && curSlide > 0) {
+                curSlide--;
             }
 
-            s.style['-webkit-transform'] = 'translateX(' + (curSlide * -100) + '%)';
+            s.style['-webkit-transition'] = 'all 0.5s ease-out';
+            s.style['-webkit-transform'] = 'translateZ(0) translateX(' + (curSlide * -100) + '%)';
+        }
+
+        function offset(delta) {
+            var v = (curSlide * -100) + (parseInt(delta));
+
+            s.style['-webkit-transition'] = 'none';
+            s.style['-webkit-transform'] = 'translateZ(0) translateX(' + v + '%)';
         }
 
         window.onload = function () {
@@ -31,11 +38,12 @@
             socket = io.connect(serverUrl);
 
             socket.on('slide', function (data) {
-                move(data == "f");
+                if (data == "f" || data == "b" || data == "r") move(data);
+                else offset(data);
             });
 
             document.addEventListener("keydown", function (e) {
-                move(e.keyCode == 39);
+                // move(e.keyCode == 39);
             });
         }
 

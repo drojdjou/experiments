@@ -10,6 +10,7 @@
     <script type="text/javascript">
 
         var delta, socket;
+        var minimumSlide = 100;
 
         window.onload = function () {
 
@@ -30,14 +31,18 @@
                 var x = e.targetTouches[0].pageX;
                 delta = x - startX;
                 info.innerHTML = x - startX;
+                socket.emit('slide', delta / window.innerWidth * 100);
             });
 
             document.addEventListener('touchend', function (e) {
-                if (delta > 0) {
+                if (delta > minimumSlide) {
                     socket.emit('slide', 'b');
                 }
-                else if (delta < 0) {
+                else if (delta < -minimumSlide) {
                     socket.emit('slide', 'f');
+                } else {
+                    info.innerHTML = "No move";
+                    socket.emit('slide', 'r');
                 }
             });
 
