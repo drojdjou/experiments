@@ -13,7 +13,7 @@ void TcpClient::setup(){
 
 void TcpClient::update(){
     if(tcp.isConnected()) {
-        string str = tcp.receive();
-        printf("%s\n", str.c_str());
+        //string str = tcp.receive();
+        //printf("%s\n", str.c_str());
     }
 }
