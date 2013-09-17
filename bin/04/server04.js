@@ -12,6 +12,7 @@ io.sockets.on('connection', function (socket) {
 
 
 var net = require('net');
+var nst;
 
 ns = net.createServer(function (s) {
     console.log("New TCP client connected");
