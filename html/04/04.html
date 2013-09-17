@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>04. Drawing With Mobile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable = no">
+
+    <link rel="stylesheet" href="main.css"/>
+
+    <script src="../js/socket.io.js"></script>
+    <script type="text/javascript">
+
+        var delta, socket;
+        var minimumSlide = 100;
+
+        window.onload = function () {
+
+            var info = document.getElementById("info");
+
+            var serverUrl = 'http://ec2-54-218-0-72.us-west-2.compute.amazonaws.com:8123';
+            //socket = io.connect(serverUrl);
+
+            document.addEventListener('touchstart', function (e) {
+            });
+
+            document.addEventListener('touchmove', function (e) {
+                e.preventDefault();
+
+                var x = e.targetTouches[0].pageX / window.innerWidth;
+                var y = e.targetTouches[0].pageY / window.innerHeight;
+
+                info.innerHTML = x + "<br>" + y;
+
+
+            });
+
+            document.addEventListener('touchend', function (e) {
+
+            });
+
+        }
+
+    </script>
+
+</head>
+<body>
+<h2 id="info">0</h2>
+</body>
+</html>
