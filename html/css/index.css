@@ -9,6 +9,9 @@ ul {
   list-style-type: none;
   margin: 0;
   padding: 0; }
+  ul li {
+    line-height: 1.6em;
+    margin-bottom: 30xopx; }
 
 h2 {
   font-size: 1.1em; }
@@ -17,8 +20,7 @@ a {
   background-color: cornflowerblue;
   color: white;
   text-decoration: none;
-  padding: 10px;
-  margin-right: 10px; }
+  padding: 6px; }
 
 a:hover {
   background-color: seagreen; }
