@@ -28,7 +28,7 @@
                 var x = e.targetTouches[0].pageX / window.innerWidth;
                 var y = e.targetTouches[0].pageY / window.innerHeight;
 
-                info.innerHTML = x + "<br>" + y;
+                // info.innerHTML = x + "<br>" + y;
                 socket.emit('interact', { x:x, y:y });
             });
 
@@ -42,6 +42,6 @@
 
 </head>
 <body>
-<h2 id="info">0</h2>
+<h2 id="info"></h2>
 </body>
 </html>

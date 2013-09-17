@@ -10,6 +10,9 @@ class TcpClient {
 		float cx;
 		float cy;
 
+		bool isDrawn;
+
 		void setup();
 		void update();
+		void draw();
 };

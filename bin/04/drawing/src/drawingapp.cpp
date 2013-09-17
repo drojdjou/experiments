@@ -40,11 +40,17 @@ void DrawingApp::update(){
 
     for (int i=0; i<balls.size(); i++)
         if(balls[i].ttl <= 0) balls.erase(balls.begin() + i);
+
+    for (int i=0; i<10; i++) 
+        if(!client->isDrawn)
+            balls.push_back(getBall(client->cx * ofGetScreenWidth() + ofRandom(-20, 20), client->cy * ofGetScreenHeight() + ofRandom(-20, 20)));
 }
 
 //--------------------------------------------------------------
 void DrawingApp::draw(){
 	ofBackground(0);
+
+    client->draw();
 
     for (int i=0; i<balls.size(); i++) {
         Ball * b = &balls[i];
@@ -78,8 +84,6 @@ void DrawingApp::keyReleased(int key){
 
 //--------------------------------------------------------------
 void DrawingApp::mouseMoved(int x, int y){
-    for (int i=0; i<10; i++) 
-        balls.push_back(getBall(x + ofRandom(-20, 20), y + ofRandom(-20, 20)));
 }
 
 //--------------------------------------------------------------
