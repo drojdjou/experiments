@@ -1,2 +1,9 @@
 /.idea/
 .DS_Store
+/bin/*/*/bin/
+*.xcodeproj
+config.make
+Makefile
+*.plist
+Project.xcconfig
+/bin/*/*/obj/
