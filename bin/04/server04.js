@@ -4,8 +4,8 @@ io.sockets.on('connection', function (socket) {
     console.log("New Websocket client connected")
     socket.on('interact', function (data) {
         if(nst) {
-        	console.log("Writing to nst: " + data.x + " : " + data.y);
-        	nst.write(data.x + ":" + data.y);
+        	//console.log("Writing to nst: " + data.x + " : " + data.y);
+        	nst.write(data.x + ":" + data.y + "\n");
         }
     });
 });
