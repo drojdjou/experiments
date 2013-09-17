@@ -1,4 +1,5 @@
 #include "drawingapp.h"
+#include "tcpclient.h"
 
 struct Ball {
     ofPoint pos;
@@ -9,6 +10,7 @@ struct Ball {
 };
 
 vector<Ball> balls;
+TcpClient * client;
 
 Ball getBall(float x, float y) {
     Ball ball;
@@ -27,10 +29,15 @@ bool fullscreen = false;
 void DrawingApp::setup(){
 	ofEnableSmoothing();
     ofSetFrameRate(60);
+
+    client = new TcpClient();
+    client->setup();
 }
 
 //--------------------------------------------------------------
 void DrawingApp::update(){
+    client->update();
+
     for (int i=0; i<balls.size(); i++)
         if(balls[i].ttl <= 0) balls.erase(balls.begin() + i);
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>04. Drawing With Mobile</title>
+    <title>04. Drawing With Mobile v0.2</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable = no">
 
     <link rel="stylesheet" href="main.css"/>
@@ -17,7 +17,7 @@
             var info = document.getElementById("info");
 
             var serverUrl = 'http://ec2-54-218-0-72.us-west-2.compute.amazonaws.com:8123';
-            //socket = io.connect(serverUrl);
+            socket = io.connect(serverUrl);
 
             document.addEventListener('touchstart', function (e) {
             });
@@ -29,8 +29,7 @@
                 var y = e.targetTouches[0].pageY / window.innerHeight;
 
                 info.innerHTML = x + "<br>" + y;
-
-
+                socket.emit('interact', { x:x, y:y });
             });
 
             document.addEventListener('touchend', function (e) {
