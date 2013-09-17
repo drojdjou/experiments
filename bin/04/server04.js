@@ -3,7 +3,10 @@ var io = require('socket.io').listen(8123);
 io.sockets.on('connection', function (socket) {
     console.log("New Websocket client connected")
     socket.on('interact', function (data) {
-        if(nst) nst.write(data.x + ":" + data.y);
+        if(nst) {
+        	console.log("Writing to nst: " + x + " : " + y);
+        	nst.write(data.x + ":" + data.y);
+        }
     });
 });
 
