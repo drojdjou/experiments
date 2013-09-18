@@ -17,12 +17,12 @@ Ball getBall(float x, float y) {
     ball.pos.x = x;
     ball.pos.y = y;
     ball.ttl = ofRandom(128, 255);
-    ball.force = ofRandom(2, 3);
-    ball.direction = ofRandom(-2, 2);
+    ball.force = ofRandom(1, 2);
+    ball.direction = ofRandom(-0.5, 0.5);
     return ball;
 }
 
-float gravity = 0.05;
+float gravity = 0.01;
 bool fullscreen = false;
 
 //--------------------------------------------------------------

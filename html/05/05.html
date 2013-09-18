@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>05. Gesture controlled cube</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable = no">
+
+    <link rel="stylesheet" href="main.css"/>
+
+    <script type="text/javascript" src="../js/require.js"></script>
+
+    <script type="text/javascript">
+
+      require([
+        "../js/lib/three.min", 
+        "../js/lib/requestAnimFrame",
+        "//js.leapmotion.com/0.2.0/leap.js"
+      ], function(util) {
+
+        var px = 0, py = 0, pz = 0, cpz = 0;
+
+        var container = document.getElementById("gl-container");
+        var info = document.getElementById("info");
+
+        var renderer = new THREE.WebGLRenderer();
+        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
+        var scene = new THREE.Scene();
+        scene.add(camera);
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x000000);
+
+        container.appendChild(renderer.domElement);
+
+        var base = new THREE.Object3D();
+        scene.add(base);
+
+        var mat = new THREE.MeshLambertMaterial({ color: 0xff0000 });
+        var cube = new THREE.Mesh(new THREE.CubeGeometry(60, 60, 60), mat);
+        base.add(cube);
+
+        var pointLight = new THREE.PointLight(0xFFFFFF);
+        pointLight.position.x = 10;
+        pointLight.position.y = 50;
+        pointLight.position.z = 130;
+        scene.add(pointLight);
+
+        function draw() {
+          requestAnimFrame(draw);
+
+          cube.rotation.x +=(py - cube.rotation.x) / 10;
+
+          base.rotation.y +=(px - base.rotation.y) / 10;
+
+          cpz += (pz - cpz) / 10;
+
+          camera.position.z = 300 + cpz;
+
+          renderer.render(scene, camera);
+        }
+
+        Leap.loop(function(frame) {
+          if(frame.hands.length > 0) {
+
+            var hand = frame.hands[0];
+
+            var rotX = (hand._rotation[2]);
+            var rotY = (hand._rotation[1]);
+            var rotZ = (hand._rotation[0]);
+
+            var posX = (hand.palmPosition[0]);
+            var posY = (hand.palmPosition[2]);
+            var posZ = (hand.palmPosition[1]);
+
+            var ms = 0.05;
+
+            info.innerHTML = (rotZ * 90) | 0;
+
+            px = posX / 100;
+            py = posZ / -100;
+            pz = posY / -2;
+          } else {
+            px = 0;
+            py = 0;
+            pz = 0;
+          }
+        });
+
+        draw();
+
+      });
+
+    </script>
+
+</head>
+<body>
+
+<div id="gl-container"></div>
+
+<div id="info"></div>
+
+<script>
+    if (location.host == "localhost") {
+        document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>');
+    }
+</script>
+
+</html>
