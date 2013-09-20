@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>06. Timelapse explorer v0.4</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable = no">
+
+    <link rel="stylesheet" href="main.css"/>
+
+    <script type="text/javascript" src="../js/lib/util.js"></script>
+    <script type="text/javascript" src="../js/lib/requestAnimFrame.js"></script>
+
+    <script type="text/javascript">
+
+        var timelapse, progress, frame, availableRange;
+        var index = 1, target = 1;
+        var min, max;
+        var maxRange = 1200;
+        var easing = 0.1;
+
+        function setImage(i) {
+            timelapse.src = "photos/image" + i + ".jpg";
+            progress.style.webkitTransform = "scaleX(" + (i/maxRange) + ")";
+            frame.innerHTML = max + " | " + i;
+            // window.location.hash = i;
+        }
+
+        function checkRange(c) {
+            Loader.loadJSON("photos.php", function(r) {
+                min = r.min;
+                max = r.max;
+                availableRange.style.webkitTransform = "scaleX(" + (max/maxRange) + ")";
+                if(c) c();
+            });
+        }
+
+        function draw() {
+            index += (target - index) * easing;
+            index = Math.clamp(index, min, max);
+            setImage(index | 0);
+            requestAnimFrame(draw);
+        }
+
+        
+        function setup() {
+            setImage(min);
+
+            document.addEventListener('mousemove', function(e) {
+                target = e.pageX / window.innerWidth * (max + 10);
+            });
+
+            document.addEventListener('touchmove', function(e) {
+                e.preventDefault();
+                target = e.pageX / window.innerWidth * (max + 10);
+            });
+
+            draw();
+
+            setInterval(checkRange, 1000);
+        }
+
+        window.onload = function() {
+            timelapse = document.getElementById("timelapse");
+            progress = document.getElementById("progress");
+            frame = document.getElementById("frame");
+            availableRange = document.getElementById("available-range");
+            checkRange(setup);
+        }
+
+    </script>
+
+</head>
+<body>
+
+<img id="timelapse" width="960" height="540">
+<div id="available-range"></div>
+<div id="progress"></div>
+<div id="frame"></div>
+
+</body>
+
+<script>
+    if (location.host == "localhost") {
+        document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>');
+    }
+</script>
+
+</html>

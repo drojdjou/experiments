@@ -7,3 +7,4 @@ Makefile
 *.plist
 Project.xcconfig
 /bin/*/*/obj/
+/html/06/photos/*.*

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>05b. Gesture controlled page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable = no">
+
+    <link rel="stylesheet" href="mainb.css"/>
+
+    <script type="text/javascript" src="//js.leapmotion.com/0.2.0/leap.js"></script>
+
+    <script type="text/javascript">
+
+        var s, curSlide = 0, ofs = 0, info, lpscroll, lpstart;
+
+        function move(dir) {
+
+            if (dir == "f" && curSlide < 7) {
+                curSlide++;
+            } else if(dir == "b" && curSlide > 0) {
+                curSlide--;
+            }
+
+            s.style['-webkit-transition'] = 'all 0.5s ease-out';
+            s.style['-webkit-transform'] = 'translateZ(0) translateY(' + (curSlide * -100) + '%)';
+        }
+
+        function offset(delta) {
+            var v = (curSlide * -100) + (parseInt(delta));
+            s.style['-webkit-transition'] = 'none';
+            s.style['-webkit-transform'] = 'translateZ(0) translateY(' + v + '%)';
+        }
+
+        window.onload = function () {
+            s = document.getElementById('slideshow');
+            info = document.getElementById('info');
+
+            document.addEventListener('keydown', function(e) {
+                if(e.keyCode == 38) ofs += 10;
+                if(e.keyCode == 40) ofs -= 10;
+                offset(ofs);
+            });
+
+            document.addEventListener('keyup', function(e) {
+                // 38 up : 40 down
+                if(e.keyCode == 38) move("b");
+                if(e.keyCode == 40) move("f");
+                ofs = 0;
+            });
+
+            Leap.loop(function(frame) {
+                if(frame.hands.length > 0) {
+                    var hand = frame.hands[0];
+                    var posX = (hand.palmPosition[0]);
+                    var posY = (hand.palmPosition[2]);
+                    var posZ = (hand.palmPosition[1]);
+
+                    if(lpstart == -1) {
+                        lpstart = posZ;
+                    } else {
+                        lpscroll = posZ - lpstart;
+                    }
+
+                    lpscroll = Math.max(-100, lpscroll);
+                    lpscroll = Math.min(100, lpscroll);
+
+                    offset(-lpscroll);
+
+                    //info.innerHTML = lpscroll | 0;
+
+                } else {
+
+                    if(lpscroll > 50) move("f");
+                    else if(lpscroll < -50) move("b");
+                    else move("r")
+
+                    lpstart = -1;
+                    lpscroll = 0;
+                    //info.innerHTML = 0;
+                }
+            });
+        }
+
+    </script>
+
+</head>
+<body>
+<ul id="slideshow">
+    <li><h2>1</h2></li>
+    <li><h2>2</h2></li>
+    <li><h2>3</h2></li>
+    <li><h2>4</h2></li>
+    <li><h2>5</h2></li>
+    <li><h2>6</h2></li>
+    <li><h2>7</h2></li>
+    <li><h2>8</h2></li>
+</ul>
+
+<div id="info"></div>
+
+</body>
+
+<script>
+    if (location.host == "localhost") {
+        document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>');
+    }
+</script>
+
+</html>
