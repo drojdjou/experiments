@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>07. Simple multiuser experience</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable = no">
+
+    <link rel="stylesheet" href="main07.css"/>
+
+    <script type="text/javascript" src="../js/lib/util.js"></script>
+    <script type="text/javascript" src="../js/lib/socket.io.js"></script>
+
+    <script type="text/javascript">
+
+    var boxesContainer, boxes = [];
+    var sidebar;
+
+    var user, userColor;
+
+    var text = "Call me Ishmael. Some years ago - never mind how long precisely - having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people's hats off - then, I account it high time to get to sea as soon as I can. This is my substitute for pistol and ball. With a philosophical flourish Cato throws himself upon his sword; I quietly take to the ship. There is nothing surprising in this. If they but knew it, almost all men in their degree, some time or other, cherish very nearly the same feelings towards the ocean with me. There now is your insular city of the Manhattoes, belted round by wharves as Indian isles by coral reefs—commerce surrounds it with her surf. Right and left, the streets take you waterward. Its extreme downtown is the battery, where that noble mole is washed by waves, and cooled by breezes, which a few hours previous were out of sight of land. Look at the crowds of water-gazers there. Circumambulate the city of a dreamy Sabbath afternoon. Go from Corlears Hook to Coenties Slip, and from thence, by Whitehall, northward. What do you see? - Posted like silent sentinels all around the town, stand thousands upon thousands of mortal men fixed in ocean reveries. Some leaning against the spiles; some seated upon the pier-heads; some looking over the bulwarks of ships from China; some high aloft in the rigging, as if striving to get a still better seaward peep. But these are all landsmen; of week days pent up in lath and plaster - tied to counters, nailed to benches, clinched to desks. How then is this? Are the green fields gone? What do they here? But look! here come more crowds, pacing straight for the water, and seemingly bound for a dive. Strange! Nothing will content them but the extremest limit of the land; loitering under the shady lee of yonder warehouses will not suffice. No. They must get just as nigh the water as they possibly can without falling in. And there they stand—miles of them—leagues. Inlanders all, they come from lanes and alleys, streets and avenues—north, east, south, and west. Yet here they all unite. Tell me, does the magnetic virtue of the needles of the compasses of all those ships attract them thither?";
+
+    var tempList = text.split(" ");
+    var wordList = [];
+    var punc = ".,!?;-".split("");
+
+    function isPunc(w) {
+        for(var i = 0; i < punc.length; i++) {
+            if(w == punc[i]) return true;
+        }
+        return false;
+    }
+
+    for(var i = 0; i < tempList.length; i++) {
+        var w = tempList[i];
+
+        var hadPunc = false;
+        for(var j = 0; j < punc.length; j++) {
+            var p = punc[j];
+            if(w.indexOf(p) > -1) {
+                var ws = w.split(p)[0];
+                if(ws) wordList.push(ws);
+                wordList.push(p);
+                hadPunc = true;
+            } 
+        }
+
+        if(!hadPunc) wordList.push(w);
+    }
+
+    numBoxes = wordList.length;
+
+    var serverUrl = 'http://ec2-54-218-0-72.us-west-2.compute.amazonaws.com:8123';
+    // var serverUrl = 'http://localhost:8123';
+
+    window.onload = function() {
+        boxesContainer = document.querySelector("#boxes ul");
+        sidebar = document.querySelector("#sidebar");
+
+        socket = io.connect(serverUrl);
+
+        socket.on('login', function (data) {
+
+            console.log('login', data)
+
+            user = data.user;
+            userColor = data.user.hex;
+            addInfo("Welcome! Your name is " + data.user.name + " [" + data.user.id + "]");
+
+            var list = [];
+
+            for(var i = 0; i < data.clients.length; i++) {
+                list.push(data.clients[i].name);
+            }
+
+            addInfo("Users online: " + list.join(", "));
+
+            init();
+
+            for(var i = 0; i < data.wordsGuessed.length; i++) {
+                setGuessedWord(data.wordsGuessed[i]);
+                // console.log(data.wordsGuessed[i]);
+            }
+
+        });
+
+        socket.on('new-client', function (data) {
+            addInfo("User " + data.name + " joined");
+        });
+
+        socket.on('word-sel', function (data) {
+            console.log('word-sel', data);
+            boxes[data.id].style.backgroundColor = data.user.hex;
+            boxes[data.id].setAttribute("data-user-id", data.user.id);
+        });
+
+        socket.on('word-desel', function (data) {
+            console.log('word-desel', data);
+            boxes[data.id].style.backgroundColor = "#fff";
+            boxes[data.id].setAttribute("data-user-id", "");
+        });
+
+        socket.on('word-guess', function (data) {
+            console.log('word-guess', data);
+            setGuessedWord(data);
+            addInfo(data.user.name + " guessed " + "'" + data.word + "'");
+        });
+
+        socket.on('logout', function(data) {
+            addInfo("User " + data.name + " left");
+
+            for(var i = 0; i < numBoxes; i++) {
+                var b = boxes[i];
+                var w = b.getAttribute("data-user-id");
+
+                if(w == data.id) {
+                    boxes[i].style.backgroundColor = "#fff";
+                }
+            }
+        });
+    }
+
+    window.onunload = function() {
+        socket.emit('logout', user);
+    }
+
+    var addInfo = function(info) {
+        sidebar.innerHTML += "<p>--- " + info + "</p>";
+    }
+
+    var setGuessedWord = function(data) {
+        var id = data.id;
+        boxes[id].style.backgroundColor = data.user['hex'];
+        boxes[id].innerHTML = wordList[id];
+    }
+
+    var checkBoxes = function() {
+        for(var i = 0; i < numBoxes; i++) {
+            var b = boxes[i];
+            var w = b.getAttribute("data-word");
+            var id = b.getAttribute("data-word-id");
+            var u = b.innerHTML;
+            var isActive = boxes[i].getAttribute("contenteditable") == "true";
+
+            if(isActive) {
+
+                if(u == w && !isPunc(w)) {
+                    boxes[i].style.backgroundColor = userColor;
+                    boxes[i].setAttribute("contenteditable", false);
+                    socket.emit("word-guess", { id: id, word: w, user: user });
+                } else if(!isPunc(w)) {
+                    boxes[i].innerHTML = "";
+                    boxes[i].style.backgroundColor = "#fff";
+                    boxes[i].setAttribute("contenteditable", false);
+                    socket.emit("word-desel", { id: id });
+                }
+            }
+        }
+    }
+
+    var init = function() {
+
+        for(var i = 0; i < numBoxes; i++) {
+
+            var word = wordList[i];
+            var wordElement = document.createElement("li");
+
+            wordElement.setAttribute("data-word", word);
+            wordElement.setAttribute("data-word-id", i);
+
+            boxesContainer.appendChild(wordElement);
+            boxes.push(wordElement);
+
+            if(isPunc(word)) {
+                wordElement.innerHTML = word;
+            } else {
+                wordElement.style.width = (word.length * 11) + "px";
+            
+                var wordEvent = (function() {
+                    var editMode = false;
+                    var element = wordElement;
+                    var wordId = i;
+
+                    return function(e) {
+                        if(!editMode && element.innerHTML != "") {
+                            // locked
+                            return;
+                        }
+
+                        editMode = !editMode;
+
+                        checkBoxes();
+
+                        if(editMode) {
+                            element.style.backgroundColor = userColor;
+                            element.setAttribute("contenteditable", true);
+                            socket.emit("word-sel", { id: wordId, user: user });
+                        }
+                    }
+                })();
+
+                wordElement.addEventListener("click", wordEvent);
+                wordElement.addEventListener("keydown", function(e) {
+                    if(e.keyCode == 13 || e.keyCode == 9) {
+                        e.preventDefault();
+                        wordEvent(e);
+                    }
+                });
+
+                
+            }
+            
+        }
+    }
+
+    </script>
+
+</head>
+<body>
+
+<div id="boxes">
+    <h1>Moby Dick</h1>
+    <ul></ul>
+</div>
+
+<div id="sidebar">
+    <p>Click on any word to toggle guessing mode.</p>
+</div>
+
+
+</body>
+
+<script>
+    if (location.host == "localhost") {
+        //document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>');
+    }
+</script>
+
+</html>

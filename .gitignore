@@ -8,3 +8,4 @@ Makefile
 Project.xcconfig
 /bin/*/*/obj/
 /html/06/photos/*.*
+node_modules
