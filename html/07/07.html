@@ -49,11 +49,12 @@
 
     numBoxes = wordList.length;
 
-    var serverUrl = 'http://ec2-54-218-0-72.us-west-2.compute.amazonaws.com:8123';
-    // var serverUrl = 'http://localhost:8123';
+    // var serverUrl = 'http://ec2-54-218-0-72.us-west-2.compute.amazonaws.com:8123';
+    // var serverUrl = 'http://192.168.6.153:8123';
+    var serverUrl = 'http://192.168.0.15:8123';
 
     window.onload = function() {
-        boxesContainer = document.querySelector("#boxes ul");
+        boxesContainer = document.querySelector("#boxes div");
         sidebar = document.querySelector("#sidebar");
 
         socket = io.connect(serverUrl);
@@ -112,15 +113,11 @@
                 var b = boxes[i];
                 var w = b.getAttribute("data-user-id");
 
-                if(w == data.id) {
+                if(w == data.id && b.value == "") {
                     boxes[i].style.backgroundColor = "#fff";
                 }
             }
         });
-    }
-
-    window.onunload = function() {
-        socket.emit('logout', user);
     }
 
     var addInfo = function(info) {
@@ -130,31 +127,8 @@
     var setGuessedWord = function(data) {
         var id = data.id;
         boxes[id].style.backgroundColor = data.user['hex'];
-        boxes[id].innerHTML = wordList[id];
-    }
-
-    var checkBoxes = function() {
-        for(var i = 0; i < numBoxes; i++) {
-            var b = boxes[i];
-            var w = b.getAttribute("data-word");
-            var id = b.getAttribute("data-word-id");
-            var u = b.innerHTML;
-            var isActive = boxes[i].getAttribute("contenteditable") == "true";
-
-            if(isActive) {
-
-                if(u == w && !isPunc(w)) {
-                    boxes[i].style.backgroundColor = userColor;
-                    boxes[i].setAttribute("contenteditable", false);
-                    socket.emit("word-guess", { id: id, word: w, user: user });
-                } else if(!isPunc(w)) {
-                    boxes[i].innerHTML = "";
-                    boxes[i].style.backgroundColor = "#fff";
-                    boxes[i].setAttribute("contenteditable", false);
-                    socket.emit("word-desel", { id: id });
-                }
-            }
-        }
+        boxes[id].value = wordList[id];
+        boxes[id].setAttribute("tabindex", "-1");
     }
 
     var init = function() {
@@ -162,51 +136,78 @@
         for(var i = 0; i < numBoxes; i++) {
 
             var word = wordList[i];
-            var wordElement = document.createElement("li");
-
-            wordElement.setAttribute("data-word", word);
-            wordElement.setAttribute("data-word-id", i);
-
-            boxesContainer.appendChild(wordElement);
-            boxes.push(wordElement);
+            
 
             if(isPunc(word)) {
+                var wordElement = document.createElement("span");
+
+                wordElement.setAttribute("data-word", word);
+                wordElement.setAttribute("data-word-id", i);
+
+                boxesContainer.appendChild(wordElement);
+                boxes.push(wordElement);
+
+                wordElement.style.width = (word.length * 11) + "px";
                 wordElement.innerHTML = word;
             } else {
+
+                var wordElement = document.createElement("input");
+
+                wordElement.setAttribute("data-word", word);
+                wordElement.setAttribute("data-word-id", i);
+
+                wordElement.setAttribute("autocapitalize", "off");
+
+                boxesContainer.appendChild(wordElement);
+                boxes.push(wordElement);
+
                 wordElement.style.width = (word.length * 11) + "px";
-            
-                var wordEvent = (function() {
-                    var editMode = false;
+
+                var wordFocus = (function() {
                     var element = wordElement;
-                    var wordId = i;
 
                     return function(e) {
-                        if(!editMode && element.innerHTML != "") {
-                            // locked
+                        if(element.value == element.getAttribute("data-word")) {
+                            element.blur();
                             return;
                         }
 
-                        editMode = !editMode;
+                        element.style.backgroundColor = userColor;
+                        socket.emit("word-sel", { id: element.getAttribute("data-word-id"), user: user });
+                    }
+                })();
 
-                        checkBoxes();
+                var wordBlur =  (function() {
+                    var element = wordElement;
 
-                        if(editMode) {
-                            element.style.backgroundColor = userColor;
-                            element.setAttribute("contenteditable", true);
-                            socket.emit("word-sel", { id: wordId, user: user });
+                    return function(e) {
+                        var w = element.getAttribute("data-word");
+                        var id = element.getAttribute("data-word-id");
+
+                        if(element.value.toLowerCase() == w.toLowerCase()) {
+                            element.value = w;
+                            element.setAttribute("tabindex", "-1");
+                            socket.emit("word-guess", { id: id, word: w, user: user });
+                        } else {
+                            element.style.backgroundColor = "#fff";
+                            element.value = "";
+                            socket.emit("word-desel", { id: element.getAttribute("data-word-id"), user: user });
                         }
                     }
                 })();
 
-                wordElement.addEventListener("click", wordEvent);
-                wordElement.addEventListener("keydown", function(e) {
-                    if(e.keyCode == 13 || e.keyCode == 9) {
-                        e.preventDefault();
-                        wordEvent(e);
-                    }
-                });
+                var wordSubmit = (function() {
+                    var element = wordElement;
 
-                
+                    return function(e) {
+                        if(e.keyCode == 13) element.blur();
+                    }
+                })();
+
+                wordElement.addEventListener("focus", wordFocus);
+                wordElement.addEventListener("blur", wordBlur);
+
+                wordElement.addEventListener("keydown", wordSubmit);
             }
             
         }
@@ -219,7 +220,7 @@
 
 <div id="boxes">
     <h1>Moby Dick</h1>
-    <ul></ul>
+    <div></div>
 </div>
 
 <div id="sidebar">
@@ -231,7 +232,7 @@
 
 <script>
     if (location.host == "localhost") {
-        //document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>');
+        document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>');
     }
 </script>
 

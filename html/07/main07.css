@@ -17,13 +17,13 @@ body {
     display: block;
     letter-spacing: 0.01em;
     font-size: 3em; }
-  #boxes ul {
+  #boxes div {
     list-style-type: none;
     margin: 10px;
     padding: 0;
     width: 70%;
     min-width: 300px; }
-    #boxes ul li {
+    #boxes div input, #boxes div span {
       font-family: 'Lucida Console', Courier, mono;
       float: left;
       min-height: 1.2em;
@@ -31,8 +31,11 @@ body {
       margin: 5px 5px 5px 0px;
       box-shadow: 1px 1px 1px #aaa;
       font-size: 1.1em;
-      padding: 5px; }
-    #boxes ul li:hover {
+      padding: 5px;
+      border: 0;
+      -webkit-appearance: none;
+      border-radius: 0; }
+    #boxes div input:hover {
       cursor: text; }
 
 #sidebar {
@@ -51,3 +54,7 @@ body {
   #sidebar p {
     margin: 5px 0 0 0;
     padding: 0; }
+
+@media screen and (max-width: 1024px) {
+  #sidebar {
+    display: none; } }

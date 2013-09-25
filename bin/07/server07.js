@@ -22,6 +22,18 @@ var wordsGuessed = [];
 
 var colorIndex = 0;
 
+function removeUser(data, socket) {
+	var cl = clients.length;
+	for(var i = 0; i < cl; i++) {
+		if(clients[i].id == data.id) {
+			clients.splice(i, 1);
+			console.log('> logout user ', data.id, ' | left: ' + clients.length);
+			socket.broadcast.emit('logout', data);
+			break;
+		}
+	}
+}
+
 io.sockets.on('connection', function (socket) {
 
 	var id = userId++;
@@ -39,18 +51,9 @@ io.sockets.on('connection', function (socket) {
     colorIndex++;
     if(colorIndex >= colors.length) colorIndex = 0;
 
-    socket.on('logout', function (data) {
-
-    	var cl = clients.length;
-    	for(var i = 0; i < cl; i++) {
-    		if(clients[i].id == data.id) {
-    			clients.splice(i, 1);
-    			console.log('> logout user ', data.id, ' | left: ' + clients.length);
-    			socket.broadcast.emit('logout', data);
-    			break;
-    		}
-    	}
-    });
+    // socket.on('logout', function (data) {
+    // 	removeUser(n);
+    // });
 
     socket.on('word-sel', function (data) {
     	socket.broadcast.emit('word-sel', data);
@@ -64,6 +67,10 @@ io.sockets.on('connection', function (socket) {
     	socket.broadcast.emit('word-guess', data);
     	wordsGuessed.push(data);
     });
+
+    socket.on('disconnect', function () {
+		removeUser(n, socket);
+	});
 });
 
 console.log("Server ready on port 8123");
