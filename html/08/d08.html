@@ -11,7 +11,7 @@
 
         var socket;
         var ofx, ofy, info, dx, dy;
-        var port = 7000;
+        
 
         window.onload = function () {
 
@@ -23,7 +23,8 @@
 
             s = document.getElementById("slideshow");
 
-            // var serverUrl = 'http://ec2-54-218-0-72.us-west-2.compute.amazonaws.com:7000';
+            var port = 7000;
+            // var serverUrl = 'http://ec2-54-218-0-72.us-west-2.compute.amazonaws.com:' + port;
             var serverUrl = 'http://' + location.host + ':' + port;
 
             socket = io.connect(serverUrl);

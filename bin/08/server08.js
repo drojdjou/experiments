@@ -1,8 +1,8 @@
-var io = require('socket.io').listen(7000, { log: true });
+var io = require('socket.io').listen(7000, { log: false });
 
 io.sockets.on('connection', function (socket) {
 
-	console.log("Client connected");
+	console.log("Client connected.", new Date().getTime());
 
     socket.emit("hello", "hello");
 
