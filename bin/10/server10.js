@@ -5,7 +5,7 @@ var logReaders = [];
 io.sockets.on('connection', function (socket) {
 
 	//console.log("New client");
-	if(logReader) logReader.emit("new", {});
+	// if(logReader) logReader.emit("new", {});
 
 	socket.on('reader', function (data) {
 		//console.log("Reader registered!");
