@@ -5,6 +5,7 @@ var app = express();
 
 app.set('view engine', 'html');
 app.engine('html', hbs.__express);
+app.use(express.static('public'));
 
 app.get('/', function(request, response) {
 	response.render('index', { title: "Express App v.0.2", header: "Hello from Node+Express+Handlebars" });

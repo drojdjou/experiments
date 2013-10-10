@@ -1,0 +1,27 @@
+body {
+  margin: 0;
+  padding: 10px;
+  border: 0;
+  background-color: black;
+  color: white;
+  font-family: 'Lucida Console', Courier, mono;
+  font-size: 0.9em; }
+
+#list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0; }
+  #list .new {
+    color: green; }
+  #list .log {
+    color: #808080; }
+  #list .warn {
+    color: orange; }
+  #list .error {
+    color: red; }
+  #list li span:nth-of-type(1) {
+    padding: 4px; }
+    #list li span:nth-of-type(1):hover {
+      cursor: pointer; }
+  #list li ul {
+    display: none; }

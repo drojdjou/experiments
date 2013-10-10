@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>09. Simple remote logger</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable = no">
+
+    <link rel="stylesheet" href="main.css"/>
+
+    <script src="../js/lib/socket.io.js"></script>
+    <script src="RL.js"></script>
+    <script type="text/javascript">
+
+        window.onload = function () {
+
+            var l = 0, w = 0, e = 0;
+
+            setInterval(function() {
+                RL.log("Log message nr " + l++);
+            }, 3000);
+
+            setInterval(function() {
+                RL.warn("Warn message nr " + w++);
+            }, 5000);
+
+            setInterval(function() {
+                RL.error("Error message nr " + e++);
+            }, 6500);
+
+        }
+
+    </script>
+
+</head>
+<body>
+
+</body>
+
+<script>
+    if (location.host == "localhost") {
+        document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>');
+    }
+</script>
+
+</html>

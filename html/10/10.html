@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>09. Simple remote logger</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable = no">
+
+    <link rel="stylesheet" href="main.css"/>
+
+    <script src="../js/lib/socket.io.js"></script>
+    <script type="text/javascript">
+
+        var socket, list;
+        
+
+        window.onload = function () {
+
+            list = document.querySelector("#list");
+
+            var port = 7001;
+            // var serverUrl = 'http://ec2-54-218-0-72.us-west-2.compute.amazonaws.com:' + port;
+            var serverUrl = 'http://' + location.host + ':' + port;
+
+            socket = io.connect(serverUrl);
+
+            var now = function() {
+                var t = new Date();
+
+                var h = t.getHours();
+                if(h <= 9) h = "0" + h;
+
+                var m = t.getHours();
+                if(m <= 9) m = "0" + m;
+
+                var s = t.getHours();
+                if(s <= 9) s = "0" + s;
+
+                return h + ":" + m + ":" + s;
+            } 
+
+            var addRecord = function(type, data) {
+
+                var log = document.createElement("li");
+                log.setAttribute("class", type);
+                var last = document.querySelector("#list li:nth-of-type(1)");
+                list.insertBefore(log, last);
+
+                var plus = document.createElement("span");
+                plus.innerHTML = "+";
+
+                var head = document.createElement("span"); 
+                head.innerHTML = now() + " - " + data.message;
+
+                var body = document.createElement("ul");
+
+                for(var i = 0; i < 4; i++) {
+                    body.innerHTML += "<li>Some message</li>";
+                }
+
+                log.appendChild(plus); 
+                log.appendChild(head); 
+                log.appendChild(body); 
+
+                log.bodyToggle = false;
+
+                plus.addEventListener("click", function() {
+                    log.bodyToggle = !log.bodyToggle;
+
+                    if(log.bodyToggle) {
+                        body.style.display = "block";
+                    } else {
+                        body.style.display = "none";
+                    }
+                });
+            }
+
+            socket.on("new", function(data) {
+                // addRecord("new", data);
+            });
+
+            socket.on("log", function(data) {
+                addRecord("log", data);
+            });
+
+            socket.on("warn", function(data) {
+                addRecord("warn", data);
+            });
+
+            socket.on("error", function(data) {
+                addRecord("error", data);
+            });
+
+            socket.emit("reader", "nothing");
+        }
+
+    </script>
+
+</head>
+<body>
+
+<ul id="list"></ul>
+
+</body>
+
+<script>
+    if (location.host == "localhost") {
+        document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>');
+    }
+</script>
+
+</html>
