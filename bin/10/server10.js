@@ -1,6 +1,6 @@
 var io = require('socket.io').listen(7001, { log: false });
 
-var logReader;
+var logReaders = [];
 
 io.sockets.on('connection', function (socket) {
 
@@ -9,11 +9,11 @@ io.sockets.on('connection', function (socket) {
 
 	socket.on('reader', function (data) {
 		//console.log("Reader registered!");
-		logReader = socket;
+		logReaders.push(socket);
 
 		socket.on('disconnect', function () {
 			//console.log("Reader lost!");
-			logReader = null;
+			logReaders.splice(logReaders.indexOf(socket), 1);
 		});
 	});
 
