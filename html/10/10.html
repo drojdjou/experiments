@@ -17,7 +17,7 @@
             list = document.querySelector("#list");
 
             var port = 7001;
-            var serverUrl = 'http://ec2-54-218-0-72.us-west-2.compute.amazonaws.com:' + port;
+            var serverUrl = 'http://ec2.bartekdrozdz.com:' + port;
             // var serverUrl = 'http://' + location.host + ':' + port;
 
             socket = io.connect(serverUrl);
@@ -28,10 +28,10 @@
                 var h = t.getHours();
                 if(h <= 9) h = "0" + h;
 
-                var m = t.getHours();
+                var m = t.getMinutes();
                 if(m <= 9) m = "0" + m;
 
-                var s = t.getHours();
+                var s = t.getSeconds();
                 if(s <= 9) s = "0" + s;
 
                 return h + ":" + m + ":" + s;
