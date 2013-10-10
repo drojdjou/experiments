@@ -19,9 +19,9 @@ body {
     color: orange; }
   #list .error {
     color: red; }
+  #list li:hover {
+    cursor: pointer; }
   #list li span:nth-of-type(1) {
     padding: 4px; }
-    #list li span:nth-of-type(1):hover {
-      cursor: pointer; }
   #list li ul {
     display: none; }

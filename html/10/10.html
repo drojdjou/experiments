@@ -44,25 +44,22 @@
                 var last = document.querySelector("#list li:nth-of-type(1)");
                 list.insertBefore(log, last);
 
-                var plus = document.createElement("span");
-                plus.innerHTML = "+";
-
                 var head = document.createElement("span"); 
-                head.innerHTML = now() + " - " + data.message;
+                head.innerHTML = "+" + now() + " - " + data.message;
 
                 var body = document.createElement("ul");
 
-                for(var i = 0; i < 4; i++) {
-                    body.innerHTML += "<li>Some message</li>";
-                }
+                body.innerHTML += "<li>Platform: " + data.platform + "</li>";
+                body.innerHTML += "<li>User-agent: " + data.userAgent + "</li>";
+                body.innerHTML += "<li>Host: " + data.hostname + "</li>";
+                body.innerHTML += "<li>Path: " + data.pathname + "</li>";
 
-                log.appendChild(plus); 
                 log.appendChild(head); 
                 log.appendChild(body); 
 
                 log.bodyToggle = false;
 
-                plus.addEventListener("click", function() {
+                log.addEventListener("click", function() {
                     log.bodyToggle = !log.bodyToggle;
 
                     if(log.bodyToggle) {

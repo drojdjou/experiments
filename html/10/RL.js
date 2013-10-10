@@ -26,8 +26,10 @@ var RL = (function() {
 
 	var wrap = function(m) {
 		var w = {};
-		w.location = location;
-		w.navigator = navigator;
+		w.hostname = location.hostname;
+		w.pathname = location.pathname;
+		w.platform = navigator.platform;
+		w.userAgent = navigator.userAgent;
 		w.message = m;
 
 		return w;
