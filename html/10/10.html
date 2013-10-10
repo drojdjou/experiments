@@ -9,12 +9,70 @@
     <script src="../js/lib/socket.io.js"></script>
     <script type="text/javascript">
 
-        var socket, list;
+        var socket, list, rlcSelect;
+
+        var currentFilter = "all";
+        var currentRlc = "all";
+
+        var rlcs = [];
         
 
         window.onload = function () {
 
             list = document.querySelector("#list");
+            rlcSelect = document.querySelector("#rlc-filter");
+
+
+            var updateDisplay = function() {
+
+                var c = "";
+                if(currentFilter != "all") c += "." + currentFilter;
+                if(currentRlc != "all") c += "." + currentRlc;
+
+                if(c == "") c = "li";
+
+                console.log(c);
+
+                if(c != "li") {
+                    var all = document.querySelectorAll("#list li");
+
+                    for(var i = 0; i < all.length; i++) {
+                        all[i].style.display = "none";
+                    }
+                }
+
+                var all = document.querySelectorAll("#list " + c);
+
+                for(var i = 0; i < all.length; i++) {
+                    all[i].style.display = "block";
+                }
+            }
+
+
+            document.querySelector("#tf-all").addEventListener("click", function() {
+                currentFilter = "all";
+                updateDisplay();
+            });
+
+            document.querySelector("#tf-log").addEventListener("click", function() {
+                currentFilter = "log";
+                updateDisplay();  
+            });
+
+            document.querySelector("#tf-warn").addEventListener("click", function() {
+                currentFilter = "warn";
+                updateDisplay();  
+            });
+
+            document.querySelector("#tf-error").addEventListener("click", function() {
+                currentFilter = "error";
+                updateDisplay();  
+            });
+
+            rlcSelect.addEventListener("change", function() {
+                currentRlc = rlcSelect.value;
+                updateDisplay();
+            });
 
             var port = 7001;
             var serverUrl = 'http://ec2.bartekdrozdz.com:' + port;
@@ -40,12 +98,31 @@
             var addRecord = function(type, data) {
 
                 var log = document.createElement("li");
-                log.setAttribute("class", type);
+                log.setAttribute("class", type + " " + data.rlc);
                 var last = document.querySelector("#list li:nth-of-type(1)");
-                list.insertBefore(log, last);
+
+                if( (currentFilter == "all" || currentFilter == type) && (currentRlc == "all" || currentRlc == data.rlc) ) {
+                    log.style.display = "block";
+                } else {
+                    log.style.display = "none";
+                }
+
+                if(rlcs.indexOf(data.rlc) == -1) {
+                    console.log("New rcl: ", data.rlc);
+                    rlcs.push(data.rlc);
+
+                    var o = document.createElement("option");
+                    o.value = data.rlc;
+                    o.innerHTML = data.rlc;
+
+                    rlcSelect.appendChild(o);
+                }
+
+                // list.insertBefore(log, last);
+                list.appendChild(log);
 
                 var head = document.createElement("span"); 
-                head.innerHTML = "+" + now() + " - " + data.message;
+                head.innerHTML = "[" + data.rlc + "] " + now() + " - " + data.message;
 
                 var body = document.createElement("ul");
 
@@ -87,12 +164,31 @@
             });
 
             socket.emit("reader", "nothing");
+
+
         }
 
     </script>
 
 </head>
 <body>
+
+<div id="header">
+
+<ul id="type-filter">
+    <li id="tf-all">All</li>
+    <li id="tf-log">Log</li>
+    <li id="tf-warn">Warn</li>
+    <li id="tf-error">Error</li>
+</ul>
+
+<span>Client code: </span>
+
+<select id="rlc-filter">
+    <option value="all">ALL</option>
+</select>
+
+</div>
 
 <ul id="list"></ul>
 

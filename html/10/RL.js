@@ -4,7 +4,14 @@ var RL = (function() {
 
 	var initialized = false;
 
-	var socket;
+	var socket, rlc;
+
+	var getQueryStringParam = function(name) {
+	    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+	    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+	        results = regex.exec(location.search);
+	    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+	}
 
 	var init = function() {
 		var port = 7001;
@@ -22,6 +29,10 @@ var RL = (function() {
 	    	console.error("RL Fatal: socket.io not found!");
 	    	return;
 	    }
+
+	    rlc = getQueryStringParam("rlc") || "default";
+
+	    initialized = true;
 	}
 
 	var wrap = function(m) {
@@ -31,6 +42,7 @@ var RL = (function() {
 		w.platform = navigator.platform;
 		w.userAgent = navigator.userAgent;
 		w.message = m;
+		w.rlc = rlc;
 
 		return w;
 	}
