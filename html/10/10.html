@@ -17,8 +17,8 @@
             list = document.querySelector("#list");
 
             var port = 7001;
-            // var serverUrl = 'http://ec2-54-218-0-72.us-west-2.compute.amazonaws.com:' + port;
-            var serverUrl = 'http://' + location.host + ':' + port;
+            var serverUrl = 'http://ec2-54-218-0-72.us-west-2.compute.amazonaws.com:' + port;
+            // var serverUrl = 'http://' + location.host + ':' + port;
 
             socket = io.connect(serverUrl);
 
