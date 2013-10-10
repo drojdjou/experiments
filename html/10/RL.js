@@ -26,7 +26,8 @@ var RL = (function() {
 
 	var wrap = function(m) {
 		var w = {};
-
+		w.location = location;
+		w.navigator = navigator;
 		w.message = m;
 
 		return w;
